@@ -1,0 +1,28 @@
+# Copyright 2019 The Hafnium Authors.
+#
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/BSD-3-Clause.
+
+import("args.gni")
+
+source_set("mini_uart") {
+  sources = [
+    "mini_uart.c",
+  ]
+
+  assert(gpio_base_address != 0,
+         "\"gpio_base_address\" must be defined for ${target_name}.")
+  assert(aux_base_address != 0,
+         "\"aux_base_address\" must be defined for ${target_name}.")
+  assert(core_freq_mhz != 0,
+         "\"core_freq_mhz\" must be defined for ${target_name}.")
+  assert(baudrate != 0, "\"baudrate\" must be defined for ${target_name}.")
+
+  defines = [
+    "GPIO_BASE=${gpio_base_address}",
+    "AUX_BASE=${aux_base_address}",
+    "CORE_FREQ_MHZ=${core_freq_mhz}",
+    "BAUDRATE=${baudrate}",
+  ]
+}

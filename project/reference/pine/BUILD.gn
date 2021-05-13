@@ -1,0 +1,20 @@
+# Copyright 2019 The Hafnium Authors.
+#
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/BSD-3-Clause.
+
+import("args.gni")
+
+source_set("uart") {
+  sources = [
+    "uart.c",
+  ]
+
+  assert(uart_base_address != 0,
+         "\"uart_base_address\" must be defined for ${target_name}.")
+
+  defines = [
+    "UART_BASE=${uart_base_address}",
+  ]
+}

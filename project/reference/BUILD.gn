@@ -1,0 +1,201 @@
+# Copyright 2018 The Hafnium Authors.
+#
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/BSD-3-Clause.
+
+import("//build/toolchain/embedded.gni")
+import("//build/toolchain/host.gni")
+
+group("root") {
+  deps = [
+    "//src:hafnium(:aem_v8a_fvp_clang)",
+    "//src:hafnium(:android_aarch64_clang)",
+    "//src:hafnium(:qemu_aarch64_clang)",
+    "//src:hafnium(:rpi4_clang)",
+    "//src:hafnium(:pine64_clang)",
+    "//src:hafnium(:secure_aem_v8a_fvp_clang)",
+    "//src:hafnium(:secure_tc0_clang)",
+    "//src/arch/aarch64/qemuloader:bl(:qemu_aarch64_clang)",
+  ]
+}
+
+group("test_root") {
+  testonly = true
+
+  deps = [
+    "//src:unit_tests(:host_fake_clang)",
+    "//test/arch(:aem_v8a_fvp_clang)",
+    "//test/arch(:qemu_aarch64_clang)",
+    "//test/arch(:rpi4_clang)",
+    "//test/arch(:pine64_clang)",
+    "//test/arch(:secure_aem_v8a_fvp_clang)",
+    "//test/arch(:secure_tc0_clang)",
+    "//test/linux(:aem_v8a_fvp_vm_clang)",
+    "//test/linux(:qemu_aarch64_vm_clang)",
+    "//test/linux(:rpi4_vm_clang)",
+    "//test/linux(:secure_aem_v8a_fvp_vm_clang)",
+    "//test/linux(:secure_tc0_vm_clang)",
+    "//test/vmapi(:aem_v8a_fvp_vm_clang)",
+    "//test/vmapi(:qemu_aarch64_vm_clang)",
+    "//test/vmapi(:rpi4_vm_clang)",
+    "//test/vmapi(:secure_aem_v8a_fvp_vm_clang)",
+    "//test/vmapi(:secure_tc0_vm_clang)",
+    "//test/vmapi/arch/aarch64/gicv3:gicv3_test(:aem_v8a_fvp_vm_clang)",
+    "//test/vmapi/arch/aarch64/gicv3:gicv3_test(:qemu_aarch64_vm_clang)",
+    "//test/vmapi/arch/aarch64/gicv3:gicv3_test(:secure_aem_v8a_fvp_vm_clang)",
+    "//test/vmapi/arch/aarch64/gicv3:gicv3_test(:secure_tc0_vm_clang)",
+  ]
+}
+
+# Describe each of the platforms used in this project.
+
+host_toolchain("host_fake") {
+  use_platform = true
+  heap_pages = 60
+  max_cpus = 4
+  max_vms = 6
+}
+
+aarch64_toolchains("secure_aem_v8a_fvp") {
+  cpu = "cortex-a57"
+  origin_address = "0x06000000"
+  boot_flow = "//src/boot_flow:spmc"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/arch/aarch64/arm_smmuv3"
+  gic_version = 3
+  gicd_base_address = "0x2f000000"
+  gicr_base_address = "0x2f100000"
+  heap_pages = 60
+  max_cpus = 8
+  max_vms = 16
+  branch_protection = "standard"
+  toolchain_args = {
+    plat_psci = "//src/arch/aarch64/plat/psci:spmc"
+    plat_interrupts = "//src/arch/aarch64/plat/interrupts:gicv3"
+    plat_prng = "//src/arch/aarch64/plat/prng:prng"
+    secure_world = "1"
+    pl011_base_address = "0x1c090000"
+    hftest_ctrl = "//test/hftest:ctrl_uart"
+    smmu_base_address = "0x2b400000"
+    smmu_memory_size = "0x100000"
+  }
+}
+
+aarch64_toolchains("aem_v8a_fvp") {
+  cpu = "cortex-a57"
+  origin_address = "0x80000000"
+  boot_flow = "//src/boot_flow:linux"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/arch/aarch64/arm_smmuv3"
+  gic_version = 3
+  gicd_base_address = "0x2f000000"
+  gicr_base_address = "0x2f100000"
+  heap_pages = 60
+  max_cpus = 8
+  max_vms = 16
+  toolchain_args = {
+    pl011_base_address = "0x1c090000"
+    smmu_base_address = "0x2b400000"
+    smmu_memory_size = "0x100000"
+  }
+}
+
+aarch64_toolchains("qemu_aarch64") {
+  cpu = "cortex-a57"
+  origin_address = "0x40001000"
+  boot_flow = "//src/boot_flow:linux"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/iommu:absent"
+  gic_version = 3
+  gicd_base_address = "0x08000000"
+  gicr_base_address = "0x080A0000"
+  heap_pages = 60
+  max_cpus = 8
+  max_vms = 16
+  toolchain_args = {
+    pl011_base_address = "0x09000000"
+  }
+}
+
+aarch64_toolchains("rpi4") {
+  cpu = "cortex-a72"
+  origin_address = "0x80000"
+  boot_flow = "//src/boot_flow:linux"
+  console = "//project/reference/rpi:mini_uart"
+  iommu = "//src/iommu:absent"
+  gic_version = 2
+  heap_pages = 60
+  max_cpus = 4
+  max_vms = 16
+  toolchain_args = {
+    gpio_base_address = "0xfe200000"
+    aux_base_address = "0xfe215000"
+    core_freq_mhz = 500
+    hftest_ctrl = "//test/hftest:ctrl_uart"
+  }
+}
+
+
+aarch64_toolchains("pine64") {
+  cpu = "cortex-a53"
+  origin_address = "0x80000"
+  boot_flow = "//src/boot_flow:linux"
+  console = "//project/reference/pine:uart"
+  iommu = "//src/iommu:absent"
+  gic_version = 2
+  heap_pages = 60
+  max_cpus = 4
+  max_vms = 16
+  toolchain_args = {
+    uart_base_address = "0x01C28000"
+    hftest_ctrl = "//test/hftest:ctrl_uart"
+  }
+}
+
+# Generic target which uses the Android boot flow. It is not intended to run on
+# any Android platform. It exists only to test building Android-specific code.
+aarch64_toolchains("android_aarch64") {
+  cpu = "cortex-a57"
+  origin_address = "0x0"
+  boot_flow = "//src/boot_flow:android"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/iommu:absent"
+  gic_version = 2
+  heap_pages = 60
+  max_cpus = 8
+  max_vms = 16
+  toolchain_args = {
+    pl011_base_address = "0x09000000"
+  }
+}
+
+# The Total Compute platform provides an envelope for all of Arm's latest IP.
+# TC0 is a reference open source software stack for the first version of the
+# Total Compute Fixed Virtual Platform (FVP). More info at:
+# https://community.arm.com/developer/tools-software/oss-platforms/w/docs/606/total-compute
+# https://gitlab.arm.com/arm-reference-solutions/arm-reference-solutions-docs/-/blob/master/docs/totalcompute/tc0/user-guide.rst
+#
+# Secure hafnium build for tc0 platform. This builds reference Secure Partition
+# Manager (SPM) for tc0 with Armv8.4-A Secure-EL2 extension.
+aarch64_toolchains("secure_tc0") {
+  cpu = "cortex-a57"
+  origin_address = "0xfd000000"
+  boot_flow = "//src/boot_flow:spmc"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/iommu:absent"
+  gic_version = 3
+  gicd_base_address = "0x30000000"
+  gicr_base_address = "0x30080000"
+  heap_pages = 60
+  max_cpus = 8
+  max_vms = 16
+  branch_protection = "standard"
+  toolchain_args = {
+    plat_psci = "//src/arch/aarch64/plat/psci:spmc"
+    plat_interrupts = "//src/arch/aarch64/plat/interrupts:gicv3"
+    plat_prng = "//src/arch/aarch64/plat/prng:prng"
+    secure_world = "1"
+    pl011_base_address = "0x7ff80000"
+  }
+}
