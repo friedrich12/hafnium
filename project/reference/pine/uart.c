@@ -48,8 +48,7 @@ void plat_console_putchar(char c)
 	}
 
 	/* Wait until the transmitter is no longer busy. */
-	while ((io_read32(UART_LSR) & 0x20) == 0) {
-	}
+	while ((io_read32(UART_LSR) & 0x20) == 0) continue;
 
 	/* Write data to transmitter FIFO. */
 	memory_ordering_barrier();
@@ -61,8 +60,7 @@ void plat_console_putchar(char c)
 char plat_console_getchar(void)
 {
 	/* Wait for the transmitter to be ready to deliver a byte. */
-	while ((io_read32(UART_LSR) & 0x01) == 0) {
-	}
+	while ((io_read32(UART_LSR) & 0x01) == 0) continue;
 
 	/* Read data from transmitter FIFO. */
 	return (char)(io_read32(UART_RBR));
