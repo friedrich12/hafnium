@@ -15,17 +15,17 @@
 
 //#define UART_BASE (0x01C28000)
 
-#define UART_RBR IO32_C(UART_BASE + 0x00 )
-#define UART_THR IO32_C(UART_BASE + 0x00 )
-#define UART_DLL IO32_C(UART_BASE + 0x00 )
-#define UART_IER IO32_C(UART_BASE + 0x04 )
-#define UART_DLM IO32_C(UART_BASE + 0x04 )
-#define UART_FCR IO32_C(UART_BASE + 0x08 )
-#define UART_LCR IO32_C(UART_BASE + 0x0C )
-#define UART_MCR IO32_C(UART_BASE + 0x10 )
-#define UART_LSR IO32_C(UART_BASE + 0x14 )
-#define UART_MSR IO32_C(UART_BASE + 0x18 )
-#define UART_SCR IO32_C(UART_BASE + 0x1C )
+#define UART_RBR IO32_C(UART_BASE + 0x00)
+#define UART_THR IO32_C(UART_BASE + 0x00)
+#define UART_DLL IO32_C(UART_BASE + 0x00)
+#define UART_IER IO32_C(UART_BASE + 0x04)
+#define UART_DLM IO32_C(UART_BASE + 0x04)
+#define UART_FCR IO32_C(UART_BASE + 0x08)
+#define UART_LCR IO32_C(UART_BASE + 0x0C)
+#define UART_MCR IO32_C(UART_BASE + 0x10)
+#define UART_LSR IO32_C(UART_BASE + 0x14)
+#define UART_MSR IO32_C(UART_BASE + 0x18)
+#define UART_SCR IO32_C(UART_BASE + 0x1C)
 /* clang-format on */
 
 void plat_console_init(void)

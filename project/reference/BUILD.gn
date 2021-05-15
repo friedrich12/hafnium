@@ -139,7 +139,7 @@ aarch64_toolchains("rpi4") {
 
 aarch64_toolchains("pine64") {
   cpu = "cortex-a53"
-  origin_address = "0x80000"
+  origin_address = "0x42000000"
   boot_flow = "//src/boot_flow:linux"
   console = "//project/reference/pine:uart"
   iommu = "//src/iommu:absent"
